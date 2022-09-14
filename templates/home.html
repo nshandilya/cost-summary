@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+    <HEAD>
+        <TITLE> Add/Remove dynamic rows in HTML table </TITLE>
+          <SCRIPT language="javascript">
+                function addRow(tableID) {
+        
+                    var table = document.getElementById(tableID);
+        
+                    var rowCount = table.rows.length;
+                    var row = table.insertRow(rowCount);
+        
+                    var cell1 = row.insertCell(0);
+                    var element1 = document.createElement("input");
+                    element1.type = "text";
+                    element1.name="txtbox[]";
+                    cell1.appendChild(element1);
+        
+                    
+        
+                    var cell2 = row.insertCell(1);
+                    var element2 = document.createElement("input");
+                    element2.type = "text";
+                    element2.name = "txtbox[]";
+                    cell2.appendChild(element2);
+        
+        
+                }
+                function postdata(tableID){
+                    
+                    var table = document.getElementById(tableID);
+                    var rowCount = table.rows.length;
+                    var dictdata = {}; 
+                    const data=[]
+                    
+        
+                    for(var i=0; i<rowCount; i++) {
+
+                        var itemname = table.rows[i].cells[0].innerHTML;
+                        var itemcost = table.rows[i].cells[1].innerHTML;
+                        dictdata[itemname] = itemcost;
+                        var temp=itemname + ":" + itemcost
+                        data.push(temp)
+                        
+                        
+                    }
+                    
+                    fetch('/items/summary', {
+                        method: 'POST',
+                        body: dictdata,
+                      })
+                      .then(response => response.text())
+                      .then(dictdata => {
+                        document.getElementById("responseArea").innerHTML = dictdata;
+                      })
+                      .catch(error => {
+                        console.error(error);
+                      });
+
+                }
+        
+            </SCRIPT>
+    </HEAD>
+        <BODY>
+        
+            <INPUT type="button" value="Add Row" onclick="addRow('dataTable')" />
+            <TABLE id="dataTable" width="350px" border="1">
+                <TR>
+                    <TD><INPUT type="text"/></TD>
+                    
+                    <TD> <INPUT type="text" /> </TD>
+                </TR>
+            </TABLE>
+            <INPUT type="submit" value="submit" onclick="postdata('dataTable')" />
+            <div id="responseArea"></div>
+        </BODY>
+</html>
